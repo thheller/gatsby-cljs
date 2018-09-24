@@ -1,0 +1,15 @@
+;; shadow-cljs configuration
+{:source-paths
+ ["src/dev"
+  "src/main"
+  "src/test"]
+
+ :dependencies
+ [[reagent "0.8.1"]]
+
+ :builds
+ {:gatsby {:target :npm-module
+           :output-dir "site/src/cljs"
+           :build-hooks
+           [(shadow.gatsby/create-pages)]
+           :entries [demo.gatsby]}}}
