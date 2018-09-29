@@ -1,7 +1,6 @@
 (ns demo.gatsby
   (:require
     [reagent.core :as r]
-    [shadow.markup.react :as html :refer ($)]
     ["react-helmet" :default Helmet]
     ["gatsby" :as g]))
 
@@ -16,12 +15,12 @@
                   :padding "1.45rem 1.0875rem"}}
     [:h1 {:style {:margin 0}}
      ;; only using my helper fn since I have no clue how to do it in pure react
-     ($ g/Link {:to "/" :style {:color "white" :textDecoration "none"}} title)]]])
+     [:> g/Link {:to "/" :style {:color "white" :textDecoration "none"}} title]]]])
 
 (defn layout* [props & body]
   (r/as-element
     [:<>
-     ($ Helmet {:title "hello world" :meta []})
+     [:> Helmet {:title "hello world" :meta []}]
      (header {:title "hello world"})
      (into
        [:div.page-content {:style {:margin "0 auto"
@@ -35,11 +34,11 @@
   (apply layout* props body)
   ;; gatsby wants to extract the graphql from the AST but doesn't understand CLJS code
   ;; AFAICT there is no way to get queries in otherwise
-  #_($ g/StaticQuery
-      {:query (g/graphql "query SiteTitleQuery { site { siteMetadata { title }}}")
-       :render
-       (fn [data]
-         (apply layout* (assoc props :data data) body))}))
+  #_[:> g/StaticQuery
+     {:query (g/graphql "query SiteTitleQuery { site { siteMetadata { title }}}")
+      :render
+      (fn [data]
+        (apply layout* (assoc props :data data) body))}])
 
 (defn page-index
   {:export true
@@ -59,7 +58,7 @@
     [:p "Welcome to your new Gatsby site."]
     [:p "Now go build something great with ClojureScript."]
 
-    ($ g/Link {:to "/page-2/"} "Go to page 2")))
+    [:> g/Link {:to "/page-2/"} "Go to page 2"]))
 
 (defn page-2
   {:export true
@@ -69,8 +68,7 @@
     [:h2 "Hi from the second page"]
     [:p "Welcome to page 2"]
 
-    ($ g/Link {:to "/"} "Go back to the homepage"))
-  )
+    [:> g/Link {:to "/"} "Go back to the homepage"]))
 
 (defn page-404
   {:export true
