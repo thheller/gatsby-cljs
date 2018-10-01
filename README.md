@@ -23,3 +23,15 @@ gatsby develop
 ```
 open http://localhost:8000
 ```
+
+# Notes
+
+## StaticQuery
+
+StaticQuery is not supported (as the only way to make one is to use JSX, which
+we cannot produce/use from ClojureScript). However it is possible to use
+instead the `with-query` macro (see the example).
+
+## Creating js/jsx components/pages in `site/src/`
+
+If you want to create JS or JSX components or pages in addition to Cljs code, you need to remove `"ignore": [ "*.js" ]` from `site/src/.babelrc`.
