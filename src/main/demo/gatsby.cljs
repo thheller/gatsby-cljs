@@ -1,8 +1,10 @@
 (ns demo.gatsby
   (:require
     [reagent.core :as r]
+    [goog.object :as obj]
     ["react-helmet" :default Helmet]
-    ["gatsby" :as g]))
+    ["gatsby" :as g])
+  (:require-macros [demo.gatsby :refer [with-query]]))
 
 ;; can include images+css this way
 (js/require "../css/layout.css")
@@ -21,7 +23,7 @@
   (r/as-element
     [:<>
      [:> Helmet {:title "hello world" :meta []}]
-     (header {:title "hello world"})
+     (header {:title (obj/getValueByKeys (:data props) "site" "siteMetadata" "title")})
      (into
        [:div.page-content {:style {:margin "0 auto"
                                    :max-width 960
@@ -29,16 +31,13 @@
                                    :paddingTop 0}}]
        body)]))
 
-
 (defn layout [props & body]
-  (apply layout* props body)
   ;; gatsby wants to extract the graphql from the AST but doesn't understand CLJS code
-  ;; AFAICT there is no way to get queries in otherwise
-  #_[:> g/StaticQuery
-     {:query (g/graphql "query SiteTitleQuery { site { siteMetadata { title }}}")
-      :render
-      (fn [data]
-        (apply layout* (assoc props :data data) body))}])
+  ;; so we can't use g/StaticQuery and must use our own with-query instead
+  (with-query
+      "query SiteTitleQuery { site { siteMetadata { title }}}"
+      data
+      (apply layout* (assoc props :data data) body)))
 
 (defn page-index
   {:export true
